@@ -25,8 +25,30 @@ class ViewController: UIViewController {
         myWebView.contentMode = .scaleAspectFit
         print(urlCamel?.path ?? "Url Camel is Error")
         myWebView.load(URLRequest(url: urlCamel!))
+        
+        
     }
 
 
 }
 
+extension UIImageView {
+    static func takeImageFromGif(_ imageName: String) -> UIImageView? {
+        guard let path = Bundle.main.path(forResource: imageName, ofType: "gif") else { return nil }
+        let url = URL(fileURLWithPath: path)
+        guard let gifData = try? Data(contentsOf: url), let source = CGImageSourceCreateWithData(gifData as CFData, nil) else { return nil }
+        var images = [UIImage]()
+        
+        print("------------------- \(imageName) ------------------- String have count gifs \(CGImageSourceGetCount(source)) --------------------")
+        for i in 0..<CGImageSourceGetCount(source) {
+            if let image = CGImageSourceCreateImageAtIndex(source, i, nil) {
+                images.append(UIImage(cgImage: image))
+            }
+        }
+        
+        let gifImages = UIImageView()
+        gifImages.animationImages = images
+        
+        return gifImages
+    }
+}
