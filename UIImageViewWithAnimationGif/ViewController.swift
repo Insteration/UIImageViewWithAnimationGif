@@ -10,7 +10,7 @@ import UIKit
 import WebKit
 
 class ViewController: UIViewController {
-
+    
     @IBOutlet weak var myImageView: UIImageView!
     @IBOutlet weak var myWebView: WKWebView!
     
@@ -26,17 +26,22 @@ class ViewController: UIViewController {
         print(urlCamel?.path ?? "Url Camel is Error")
         myWebView.load(URLRequest(url: urlCamel!))
         
-        guard let imageView = UIImageView.takeImageFromGif("camel") else { return }
-        let frame = myImageView.frame
-        imageView.frame = frame
-        view.addSubview(imageView)
+        //        guard let imageView = UIImageView.takeImageFromGif("camel") else { return }
+        //        let frame = myImageView.frame
+        //        imageView.frame = frame
+        //        view.addSubview(imageView)
+        //
+        //        myImageView = imageView
+        //        myImageView.animationDuration = 1
+        //        myImageView.animationRepeatCount = 2
+        //        myImageView.animationImages
         
-        myImageView = imageView
+        myImageView.animationImages = UIImageView.takeImageFromGifArray("camel")
         myImageView.startAnimating()
         
+        
     }
-
-
+    
 }
 
 extension UIImageView {
@@ -57,5 +62,21 @@ extension UIImageView {
         gifImages.animationImages = images
         
         return gifImages
+    }
+    
+    static func takeImageFromGifArray(_ imageName: String) -> [UIImage]? {
+        guard let path = Bundle.main.path(forResource: imageName, ofType: "gif") else { return nil }
+        let url = URL(fileURLWithPath: path)
+        guard let gifData = try? Data(contentsOf: url), let source = CGImageSourceCreateWithData(gifData as CFData, nil) else { return nil }
+        var images = [UIImage]()
+        
+        print("------------------- \(imageName) ------------------- String have count gifs \(CGImageSourceGetCount(source)) --------------------")
+        for i in 0..<CGImageSourceGetCount(source) {
+            if let image = CGImageSourceCreateImageAtIndex(source, i, nil) {
+                images.append(UIImage(cgImage: image))
+            }
+        }
+        
+        return images
     }
 }
