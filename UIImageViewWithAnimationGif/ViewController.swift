@@ -26,6 +26,13 @@ class ViewController: UIViewController {
         print(urlCamel?.path ?? "Url Camel is Error")
         myWebView.load(URLRequest(url: urlCamel!))
         
+        guard let imageView = UIImageView.takeImageFromGif("camel") else { return }
+        let frame = myImageView.frame
+        imageView.frame = frame
+        view.addSubview(imageView)
+        
+        myImageView = imageView
+        myImageView.startAnimating()
         
     }
 
